@@ -10,7 +10,7 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalSales = store.sales.fold(0.0, (p, s) => p + s.totalSales);
     final totalExpenses = store.bills.fold(0.0, (p, b) => p + b.value);
-    final totalSalary = store.staff.fold(0.0, (p, s) => p + s.payable(DateTime.now().month, DateTime.now().year));
+    final totalSalary = store.staff.fold(0.0, (p, s) => p + s.payable(DateTime.now().month, DateTime.now().year) + s.advancePaid);
     final profitOrLoss = totalSales - totalExpenses - totalSalary;
 
     return Padding(
