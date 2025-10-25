@@ -22,8 +22,6 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-
     return Padding(
       padding: const EdgeInsets.all(12),
       child: ListView(
@@ -116,15 +114,16 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
 
           // --- Staff List ---
           ...widget.store.staff.map((s) {
-            final payable = s.payable(now.month, now.year);
-            final payPeriod = DateFormat('dd MMM yyyy').format(selectedDate);
+            // Use staff date for month/year in payable calculation
+            final payable = s.payable(s.date.month, s.date.year);
+            final payPeriod = DateFormat('dd MMM yyyy').format(s.date);
+
             return Card(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Staff Info
                     Text(
                       s.name,
                       style: Theme.of(context)
@@ -195,6 +194,7 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
     _salaryCtrl.text = s.monthlySalary.toString();
     _attendanceCtrl.text = s.attendance.toString();
     _advanceCtrl.text = s.advancePaid.toStringAsFixed(2);
+    selectedDate = s.date; // set selected date to staff date for editing
     setState(() {});
   }
 
@@ -204,6 +204,7 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
     _salaryCtrl.clear();
     _attendanceCtrl.clear();
     _advanceCtrl.clear();
+    selectedDate = DateTime.now();
     setState(() {});
   }
 
@@ -227,6 +228,7 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
         monthlySalary: salary,
         attendance: attendance,
         advancePaid: advance,
+        date: selectedDate,
       );
       await widget.store.updateStaff(s);
       _clearForm();
@@ -237,6 +239,7 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
         monthlySalary: salary,
         attendance: attendance,
         advancePaid: advance,
+        date: selectedDate,
       );
       await widget.store.addStaff(s);
       _clearForm();

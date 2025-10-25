@@ -58,6 +58,7 @@ class StaffMember {
   double monthlySalary;
   int attendance; // days worked in the month
   double advancePaid;
+  DateTime date;
 
   StaffMember({
     required this.id,
@@ -65,6 +66,7 @@ class StaffMember {
     required this.monthlySalary,
     this.attendance = 0,
     this.advancePaid = 0.0,
+    required this.date ,
   });
 
   Map<String, dynamic> toJson() => {
@@ -73,6 +75,7 @@ class StaffMember {
     'monthlySalary': monthlySalary,
     'attendance': attendance,
     'advancePaid': advancePaid,
+    'date': date.toIso8601String(),
   };
 
   factory StaffMember.fromJson(Map<String, dynamic> j) => StaffMember(
@@ -81,10 +84,12 @@ class StaffMember {
     monthlySalary: (j['monthlySalary'] as num).toDouble(),
     attendance: j['attendance'] ?? 0,
     advancePaid: (j['advancePaid'] as num?)?.toDouble() ?? 0.0,
+    date: DateTime.parse(j['date']),
   );
 
-  int payable(int month, int year) =>
-      roundUpToNearest50((attendance / daysInMonth(month, year)) * monthlySalary - advancePaid);
+  int payable(int month, int year) => roundUpToNearest50(
+    (attendance / daysInMonth(month, year)) * monthlySalary - advancePaid,
+  );
 }
 
 int roundUpToNearest50(double value) {
