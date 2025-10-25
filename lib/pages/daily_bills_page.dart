@@ -15,7 +15,7 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
   DateTime selectedDate = DateTime.now();
   String? selectedCategory;
   final _billValueCtrl = TextEditingController();
-  final _salesCtrl = TextEditingController();
+  bool _showChart = false;
 
   @override
   void initState() {
@@ -23,17 +23,6 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
     selectedCategory = widget.store.categories.isNotEmpty
         ? widget.store.categories.first
         : null;
-    _updateSalesController();
-  }
-
-  void _updateSalesController() {
-    final todaySale = widget.store.sales.firstWhere(
-      (s) =>
-          DateFormat('yyyy-MM-dd').format(s.date) ==
-          DateFormat('yyyy-MM-dd').format(selectedDate),
-      orElse: () => DailySales(id: '', date: selectedDate, totalSales: 0),
-    );
-    _salesCtrl.text = todaySale.totalSales.toStringAsFixed(2);
   }
 
   @override
@@ -47,12 +36,8 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
         )
         .toList();
 
-    final todaySale = widget.store.sales.firstWhere(
-      (s) =>
-          DateFormat('yyyy-MM-dd').format(s.date) ==
-          DateFormat('yyyy-MM-dd').format(selectedDate),
-      orElse: () => DailySales(id: '', date: selectedDate, totalSales: 0),
-    );
+    final paidBills = billsForDate.where((b) => b.isPaid).fold(0.0, (sum, b) => sum + b.value);
+    final unpaidBills = billsForDate.where((b) => !b.isPaid).fold(0.0, (sum, b) => sum + b.value);
 
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -137,108 +122,64 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
 
           const SizedBox(height: 12),
 
-          // --- Daily Sales Input Card ---
+          // Paid Bills Summary
           Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Daily Sales',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _salesCtrl,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Total sales',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton.icon(
-                        onPressed: _saveSales,
-                        icon: const Icon(Icons.save),
-                        label: const Text('Save'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // --- Display Today's Sales as a separate card ---
-          Card(
-            color: Colors.blue.shade50,
+            color: Colors.green.shade50,
             child: ListTile(
               title: const Text(
-                "Today's Sales",
+                'Paid Bills for Day',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(
-                '₹${todaySale.totalSales.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 16),
+              trailing: Text(
+                '₹${paidBills.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _salesCtrl.text = todaySale.totalSales.toStringAsFixed(2);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Edit sales in the field above and save')),
-                      );
-                    },
-                  ),
-                  if (todaySale.id.isNotEmpty)
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: _deleteSales,
-                    ),
-                ],
+            ),
+          ),
+          
+          // Unpaid Bills Summary
+          Card(
+            color: Colors.red.shade50,
+            child: ListTile(
+              title: const Text(
+                'Unpaid Bills for Day',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: Text(
+                '₹${unpaidBills.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ),
 
           const SizedBox(height: 12),
 
-          // --- Bills List Header ---
-          Text(
-            'Bills for the day',
-            style: Theme.of(context).textTheme.titleMedium,
+          // --- View Toggle ---
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Bills for the day',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              ToggleButtons(
+                isSelected: [!_showChart, _showChart],
+                onPressed: (index) => setState(() => _showChart = index == 1),
+                children: const [
+                  Icon(Icons.list),
+                  Icon(Icons.bar_chart),
+                ],
+              ),
+            ],
           ),
           const SizedBox(height: 8),
 
-          // --- Bills List ---
-          ...billsForDate.map((b) {
-            return Card(
-              child: ListTile(
-                title: Text(b.category),
-                subtitle: Text('Value: ₹${b.value.toStringAsFixed(2)}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    await widget.store.deleteBill(b.id);
-                    setState(() {});
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Bill deleted')),
-                    );
-                  },
-                ),
-              ),
-            );
-          }).toList(),
+          // --- Bills Content ---
+          if (_showChart)
+            _buildChart(billsForDate)
+          else
+            ..._buildBillsList(billsForDate),
+
         ],
       ),
     );
@@ -253,14 +194,113 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
       lastDate: DateTime(2100),
     );
     if (d != null) {
-      setState(() {
-        selectedDate = d;
-        _updateSalesController();
-      });
+      setState(() => selectedDate = d);
     }
   }
 
   // --- Add Bill ---
+  List<Widget> _buildBillsList(List<Bill> billsForDate) {
+    return billsForDate.map((b) {
+      return Card(
+        child: ListTile(
+          title: Text(b.category),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Value: ₹${b.value.toStringAsFixed(2)}'),
+              Text(
+                b.isPaid ? 'Status: Paid' : 'Status: Pending',
+                style: TextStyle(
+                  color: b.isPaid ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(Icons.check_circle,
+                    color: b.isPaid ? Colors.green : Colors.grey),
+                onPressed: () async {
+                  b.isPaid = !b.isPaid;
+                  await widget.store.updateBill(b);
+                  setState(() {});
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  await widget.store.deleteBill(b.id);
+                  setState(() {});
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Bill deleted')),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildChart(List<Bill> billsForDate) {
+    if (billsForDate.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('No bills to display in chart'),
+        ),
+      );
+    }
+
+    final categoryTotals = <String, double>{};
+    for (final bill in billsForDate) {
+      categoryTotals[bill.category] = (categoryTotals[bill.category] ?? 0) + bill.value;
+    }
+
+    final maxValue = categoryTotals.values.reduce((a, b) => a > b ? a : b);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Bills by Category', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            ...categoryTotals.entries.map((entry) {
+              final percentage = entry.value / maxValue;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(entry.key),
+                        Text('₹${entry.value.toStringAsFixed(2)}'),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    LinearProgressIndicator(
+                      value: percentage,
+                      backgroundColor: Colors.grey.shade300,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _addBill() async {
     final val = double.tryParse(_billValueCtrl.text);
     if (val == null || selectedCategory == null) {
@@ -281,47 +321,5 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
     setState(() {});
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Bill added')));
-  }
-
-  // --- Save Daily Sales ---
-  Future<void> _saveSales() async {
-    final val = double.tryParse(_salesCtrl.text) ?? 0.0;
-    final todaySale = widget.store.sales.firstWhere(
-      (s) =>
-          DateFormat('yyyy-MM-dd').format(s.date) ==
-          DateFormat('yyyy-MM-dd').format(selectedDate),
-      orElse: () => DailySales(id: '', date: selectedDate, totalSales: 0),
-    );
-
-    if (todaySale.id.isEmpty) {
-      final s = DailySales(
-        id: 's_${DateTime.now().millisecondsSinceEpoch}',
-        date: selectedDate,
-        totalSales: val,
-      );
-      await widget.store.addSales(s);
-    } else {
-      await widget.store.updateSales(todaySale.id, val);
-    }
-    setState(() {});
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Daily sales saved')));
-  }
-
-  // --- Delete Daily Sales ---
-  Future<void> _deleteSales() async {
-    final todaySale = widget.store.sales.firstWhere(
-      (s) =>
-          DateFormat('yyyy-MM-dd').format(s.date) ==
-          DateFormat('yyyy-MM-dd').format(selectedDate),
-      orElse: () => DailySales(id: '', date: selectedDate, totalSales: 0),
-    );
-    if (todaySale.id.isNotEmpty) {
-      await widget.store.deleteSales(todaySale.id);
-      _salesCtrl.text = '0';
-      setState(() {});
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Daily sales deleted')));
-    }
   }
 }

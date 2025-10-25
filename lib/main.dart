@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
 import 'data/datastore.dart';
+import 'data/restaurant_models.dart';
 import 'pages/daily_bills_page.dart';
+import 'pages/daily_sales_page.dart';
 import 'pages/weekly_bills_page.dart';
 import 'pages/staff_salary_page.dart';
 import 'pages/dashboard_page.dart';
+import 'pages/restaurant_selection_page.dart';
+import 'pages/deleted_restaurant_dashboard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final store = await DataStore.instanceInit();
-  runApp(MyApp(store: store));
+  runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  final DataStore store;
-  const MyApp({Key? key, required this.store}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-
-  static const _title = 'Bills & Payroll';
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final colorSeed = Colors.indigo;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: _title,
+      title: 'Bills & Payroll',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: colorSeed),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(centerTitle: true, elevation: 2),
         cardTheme: const CardThemeData(
@@ -49,28 +41,69 @@ class _MyAppState extends State<MyApp> {
           fillColor: Color(0xFFF5F6FA),
         ),
       ),
+      home: const RestaurantSelectionPage(),
+      routes: {
+        '/main': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return MainPage(
+            store: args['store'] as DataStore,
+            restaurant: args['restaurant'] as Restaurant,
+          );
+        },
+        '/dashboard': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return DeletedRestaurantDashboard(
+            store: args['store'] as DataStore,
+            restaurant: args['restaurant'] as Restaurant,
+          );
+        },
+      },
+    );
+  }
+}
 
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            DailyBillsPage(store: widget.store),
-            WeeklyBillsPage(store: widget.store),
-            StaffSalaryPage(store: widget.store),
-            DashboardPage(store: widget.store),
-          ],
+class MainPage extends StatefulWidget {
+  final DataStore store;
+  final Restaurant restaurant;
+  const MainPage({Key? key, required this.store, required this.restaurant}) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.restaurant.name),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/'),
         ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-          destinations: const [
-            NavigationDestination(icon: Icon(Icons.receipt_long), label: 'Daily'),
-            NavigationDestination(icon: Icon(Icons.calendar_view_week), label: 'Weekly'),
-            NavigationDestination(icon: Icon(Icons.people_alt), label: 'Staff'),
-            NavigationDestination(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-          ],
-        ),
+      ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          DashboardPage(store: widget.store),
+          DailySalesPage(store: widget.store),
+          DailyBillsPage(store: widget.store),
+          WeeklyBillsPage(store: widget.store),
+          StaffSalaryPage(store: widget.store),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          NavigationDestination(icon: Icon(Icons.point_of_sale), label: 'Sales'),
+          NavigationDestination(icon: Icon(Icons.receipt_long), label: 'Daily Bills'),
+          NavigationDestination(icon: Icon(Icons.calendar_view_week), label: 'Weekly Bills'),
+          NavigationDestination(icon: Icon(Icons.people_alt), label: 'Staff'),
+        ],
       ),
     );
   }
