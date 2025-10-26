@@ -87,11 +87,11 @@ class _MainPageState extends State<MainPage> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          DashboardPage(store: widget.store),
+          DashboardPage(store: widget.store, restaurantName: widget.restaurant.name),
           DailySalesPage(store: widget.store),
-          DailyBillsPage(store: widget.store),
-          WeeklyBillsPage(store: widget.store),
-          StaffSalaryPage(store: widget.store),
+          DailyBillsPage(store: widget.store, restaurantName: widget.restaurant.name),
+          WeeklyBillsPage(store: widget.store, restaurantName: widget.restaurant.name),
+          StaffSalaryPage(store: widget.store, restaurantName: widget.restaurant.name),
         ],
       ),
       bottomNavigationBar: NavigationBar(

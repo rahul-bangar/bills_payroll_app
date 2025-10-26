@@ -5,7 +5,8 @@ import '../data/datastore.dart';
 
 class DashboardPage extends StatefulWidget {
   final DataStore store;
-  const DashboardPage({Key? key, required this.store}) : super(key: key);
+  final String restaurantName;
+  const DashboardPage({Key? key, required this.store, required this.restaurantName}) : super(key: key);
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -71,11 +72,9 @@ class _DashboardPageState extends State<DashboardPage> {
                DateFormat('yyyy-MM-dd').format(today))
         .toList();
 
-    // Check for unpaid salaries from previous months
-    final currentMonth = DateTime(today.year, today.month, 1);
-    final unpaidSalariesFromPreviousMonths = widget.store.staff
-        .where((s) => !s.isPaid && 
-               DateTime(s.date.year, s.date.month, 1).isBefore(currentMonth))
+    // Check for all unpaid salaries
+    final allUnpaidSalaries = widget.store.staff
+        .where((s) => !s.isPaid)
         .toList();
 
     return RefreshIndicator(
@@ -322,7 +321,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
           // Unpaid Salaries Warning Banner
-          if (unpaidSalariesFromPreviousMonths.isNotEmpty)
+          if (allUnpaidSalaries.isNotEmpty)
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: 12),
@@ -359,7 +358,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           const SizedBox(width: 8),
                           const Expanded(
                             child: Text(
-                              'Unpaid Salaries from Previous Months!',
+                              'Unpaid Salaries Alert!',
                               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
                             ),
                           ),
@@ -377,7 +376,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: unpaidSalariesFromPreviousMonths.map((staff) {
+                        children: allUnpaidSalaries.map((staff) {
                           final payableAmount = staff.payable(staff.date.month, staff.date.year).toDouble() + staff.advancePaid;
                           return Container(
                             margin: const EdgeInsets.only(top: 8),
@@ -437,61 +436,84 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
           const SizedBox(height: 12),
+          
+          // Section 1: Total Sales
+          Text('Sales Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
           Card(
+            color: Colors.blue.shade50,
             child: ListTile(
               title: const Text('Total Sales'),
-              trailing: Text(totalSales.toStringAsFixed(2)),
+              trailing: Text('₹${totalSales.toStringAsFixed(2)}'),
             ),
           ),
+          
+          const SizedBox(height: 16),
+          
+          // Section 2: Expenses
+          Text('Expenses Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
           Card(
+            color: Colors.green.shade50,
             child: ListTile(
               title: const Text('Paid Expenses'),
-              trailing: Text(paidExpenses.toStringAsFixed(2)),
+              trailing: Text('₹${paidExpenses.toStringAsFixed(2)}'),
             ),
           ),
           Card(
+            color: Colors.red.shade50,
             child: ListTile(
               title: const Text('Pending Expenses'),
-              trailing: Text(pendingExpenses.toStringAsFixed(2)),
+              trailing: Text('₹${pendingExpenses.toStringAsFixed(2)}'),
+            ),
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Section 3: Salaries
+          Text('Salaries Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Card(
+            color: Colors.orange.shade50,
+            child: ListTile(
+              title: const Text('Advance Paid'),
+              trailing: Text('₹${staffList.fold(0.0, (sum, s) => sum + s.advancePaid).toStringAsFixed(2)}'),
             ),
           ),
           Card(
+            color: Colors.red.shade50,
             child: ListTile(
-              title: const Text('Paid Salaries'),
-              trailing: Text(paidSalaries.toStringAsFixed(2)),
+              title: const Text('Unpaid Salary'),
+              trailing: Text('₹${staffList.where((s) => !s.isPaid).fold(0.0, (sum, s) => sum + s.payable(s.date.month, s.date.year).toDouble()).toStringAsFixed(2)}'),
             ),
           ),
           Card(
+            color: Colors.green.shade50,
             child: ListTile(
-              title: const Text('Unpaid Salaries'),
-              trailing: Text(unpaidSalaries.toStringAsFixed(2)),
+              title: const Text('Total Salary Paid'),
+              trailing: Text('₹${staffList.where((s) => s.isPaid).fold(0.0, (sum, s) => sum + s.payable(s.date.month, s.date.year).toDouble() + s.advancePaid).toStringAsFixed(2)}'),
             ),
           ),
+          
+          const SizedBox(height: 16),
+          
+          // Section 4: Profit/Loss
+          Text('Financial Summary', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
           Card(
             color: profitOrLoss >= 0 ? Colors.green[100] : Colors.red[100],
             child: ListTile(
               title: const Text('Profit / Loss'),
-              trailing: Text(profitOrLoss.toStringAsFixed(2)),
+              trailing: Text('₹${profitOrLoss.toStringAsFixed(2)}'),
             ),
           ),
           const SizedBox(height: 12),
           _buildExpenseChart(bills),
           const SizedBox(height: 20),
           ElevatedButton.icon(
-            onPressed: () async {
-              try {
-                final path = await widget.store.exportCsv();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('CSV exported to: $path')),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to export CSV: $e')),
-                );
-              }
-            },
-            icon: const Icon(Icons.download),
-            label: const Text('Export CSV'),
+            onPressed: _exportPdf,
+            icon: const Icon(Icons.picture_as_pdf),
+            label: const Text('Export PDF'),
           ),
               ],
             ),
@@ -663,6 +685,130 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _exportPdf() async {
+    try {
+      DateTime? startDate;
+      DateTime? endDate;
+      
+      if (_selectedView == 'Overall') {
+        // Ask user to select date range
+        final result = await showDialog<Map<String, DateTime>>(
+          context: context,
+          builder: (context) => _DateRangeDialog(),
+        );
+        if (result == null) return;
+        startDate = result['start']!;
+        endDate = result['end']!;
+      } else if (_selectedView == 'Daily') {
+        // Ask user to select a day
+        startDate = await showDatePicker(
+          context: context,
+          initialDate: _selectedDate,
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (startDate == null) return;
+      } else if (_selectedView == 'Weekly') {
+        // Ask user to select a week
+        final selectedDate = await showDatePicker(
+          context: context,
+          initialDate: _selectedWeekStart,
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (selectedDate == null) return;
+        startDate = _getWeekStart(selectedDate);
+      } else if (_selectedView == 'Monthly') {
+        // Ask user to select a month
+        final selectedDate = await showDatePicker(
+          context: context,
+          initialDate: _selectedMonth,
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (selectedDate == null) return;
+        startDate = DateTime(selectedDate.year, selectedDate.month, 1);
+      }
+      
+      if (startDate == null) return;
+      
+      final path = await widget.store.exportDashboardPdf(_selectedView, startDate, endDate, widget.restaurantName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF exported to: $path')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to export PDF: $e')),
+      );
+    }
+  }
+}
+
+class _DateRangeDialog extends StatefulWidget {
+  @override
+  _DateRangeDialogState createState() => _DateRangeDialogState();
+}
+
+class _DateRangeDialogState extends State<_DateRangeDialog> {
+  DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
+  DateTime _endDate = DateTime.now();
+  
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Select Date Range'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text('From: ${DateFormat('dd MMM yyyy').format(_startDate)}'),
+              TextButton(
+                onPressed: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: _startDate,
+                    firstDate: DateTime(2000),
+                    lastDate: _endDate,
+                  );
+                  if (date != null) setState(() => _startDate = date);
+                },
+                child: const Text('Change'),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text('To: ${DateFormat('dd MMM yyyy').format(_endDate)}'),
+              TextButton(
+                onPressed: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: _endDate,
+                    firstDate: _startDate,
+                    lastDate: DateTime(2100),
+                  );
+                  if (date != null) setState(() => _endDate = date);
+                },
+                child: const Text('Change'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, {'start': _startDate, 'end': _endDate}),
+          child: const Text('Export'),
+        ),
+      ],
     );
   }
 }

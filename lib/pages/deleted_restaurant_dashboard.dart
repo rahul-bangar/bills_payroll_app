@@ -40,7 +40,7 @@ class DeletedRestaurantDashboard extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: DashboardPage(store: store),
+            child: DashboardPage(store: store, restaurantName: restaurant.name),
           ),
         ],
       ),

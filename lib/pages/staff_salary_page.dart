@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 
 class StaffSalaryPage extends StatefulWidget {
   final DataStore store;
-  const StaffSalaryPage({Key? key, required this.store}) : super(key: key);
+  final String restaurantName;
+  const StaffSalaryPage({Key? key, required this.store, required this.restaurantName}) : super(key: key);
 
   @override
   State<StaffSalaryPage> createState() => _StaffSalaryPageState();
@@ -184,7 +185,17 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
           const SizedBox(height: 12),
 
           // --- Salary Entries List ---
-          Text('Salary Entries', style: Theme.of(context).textTheme.titleMedium),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Salary Entries', style: Theme.of(context).textTheme.titleMedium),
+              IconButton(
+                onPressed: _exportPdf,
+                icon: const Icon(Icons.picture_as_pdf),
+                tooltip: 'Export PDF',
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           ...widget.store.staff.map((s) {
             final payable = s.payable(s.date.month, s.date.year);
@@ -713,5 +724,18 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Salary marked as ${updatedStaff.isPaid ? "paid" : "unpaid"}')),
     );
+  }
+
+  Future<void> _exportPdf() async {
+    try {
+      final path = await widget.store.exportStaffSalaryPdf(selectedDate, widget.restaurantName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF exported to: $path')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to export PDF: $e')),
+      );
+    }
   }
 }

@@ -201,24 +201,33 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: selectedRestaurant != null ? _enterRestaurant : null,
-                            icon: const Icon(Icons.login),
-                            label: const Text('Enter'),
+                            onPressed: _addRestaurant,
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add'),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        ElevatedButton.icon(
-                          onPressed: _addRestaurant,
-                          icon: const Icon(Icons.add),
-                          label: const Text('Add'),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton.icon(
-                          onPressed: selectedRestaurant != null ? () => _deleteRestaurant(selectedRestaurant!) : null,
-                          icon: const Icon(Icons.delete),
-                          label: const Text('Delete'),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: selectedRestaurant != null ? () => _deleteRestaurant(selectedRestaurant!) : null,
+                            icon: const Icon(Icons.delete),
+                            label: const Text('Delete'),
+                          ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: selectedRestaurant != null ? _enterRestaurant : null,
+                        icon: const Icon(Icons.login),
+                        label: const Text('Enter Restaurant'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),

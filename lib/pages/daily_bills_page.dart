@@ -5,7 +5,8 @@ import '../data/models.dart';
 
 class DailyBillsPage extends StatefulWidget {
   final DataStore store;
-  const DailyBillsPage({Key? key, required this.store}) : super(key: key);
+  final String restaurantName;
+  const DailyBillsPage({Key? key, required this.store, required this.restaurantName}) : super(key: key);
 
   @override
   State<DailyBillsPage> createState() => _DailyBillsPageState();
@@ -154,7 +155,7 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
 
           const SizedBox(height: 12),
 
-          // --- View Toggle ---
+          // --- View Toggle and Export ---
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -162,12 +163,21 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
                 'Bills for the day',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              ToggleButtons(
-                isSelected: [!_showChart, _showChart],
-                onPressed: (index) => setState(() => _showChart = index == 1),
-                children: const [
-                  Icon(Icons.list),
-                  Icon(Icons.bar_chart),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: _exportPdf,
+                    icon: const Icon(Icons.picture_as_pdf),
+                    tooltip: 'Export PDF',
+                  ),
+                  ToggleButtons(
+                    isSelected: [!_showChart, _showChart],
+                    onPressed: (index) => setState(() => _showChart = index == 1),
+                    children: const [
+                      Icon(Icons.list),
+                      Icon(Icons.bar_chart),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -321,5 +331,18 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
     setState(() {});
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Bill added')));
+  }
+
+  Future<void> _exportPdf() async {
+    try {
+      final path = await widget.store.exportDailyBillsPdf(selectedDate, widget.restaurantName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF exported to: $path')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to export PDF: $e')),
+      );
+    }
   }
 }

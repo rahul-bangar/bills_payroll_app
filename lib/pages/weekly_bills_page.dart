@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 
 class WeeklyBillsPage extends StatefulWidget {
   final DataStore store;
-  const WeeklyBillsPage({Key? key, required this.store}) : super(key: key);
+  final String restaurantName;
+  const WeeklyBillsPage({Key? key, required this.store, required this.restaurantName}) : super(key: key);
 
   @override
   State<WeeklyBillsPage> createState() => _WeeklyBillsPageState();
@@ -155,7 +156,17 @@ class _WeeklyBillsPageState extends State<WeeklyBillsPage> {
           ),
 
           const SizedBox(height: 12),
-          Text('Weekly bills', style: Theme.of(context).textTheme.titleMedium),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Weekly bills', style: Theme.of(context).textTheme.titleMedium),
+              IconButton(
+                onPressed: _exportPdf,
+                icon: const Icon(Icons.picture_as_pdf),
+                tooltip: 'Export PDF',
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
 
           // --- Weekly Bills List ---
@@ -303,5 +314,19 @@ class _WeeklyBillsPageState extends State<WeeklyBillsPage> {
     setState(() {});
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Weekly bill added')));
+  }
+
+  Future<void> _exportPdf() async {
+    try {
+      final weekStart = _weekStart(selectedDate);
+      final path = await widget.store.exportWeeklyBillsPdf(weekStart, widget.restaurantName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF exported to: $path')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to export PDF: $e')),
+      );
+    }
   }
 }
