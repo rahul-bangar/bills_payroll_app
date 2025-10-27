@@ -81,26 +81,102 @@ class _DashboardPageState extends State<DashboardPage> {
       onRefresh: () async {
         setState(() {}); // Refresh the dashboard
       },
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFF8FAFC), Color(0xFFFFFFFF)],
+          ),
+        ),
         child: ListView(
+          padding: const EdgeInsets.all(16),
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-          const Text('Dashboard',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
+            // Header Section
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6366F1).withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.dashboard,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dashboard',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'Financial Overview',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
 
           // Unpaid Bills Warning Banner
           if (unpaidBillDates.isNotEmpty)
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.red.shade100,
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [Colors.red.shade50, Colors.red.shade100],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.red.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.red.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -172,11 +248,22 @@ class _DashboardPageState extends State<DashboardPage> {
           if (unpaidWeeklyBills.isNotEmpty)
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.orange.shade100,
-                border: Border.all(color: Colors.orange),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [Colors.orange.shade50, Colors.orange.shade100],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.orange.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -248,11 +335,22 @@ class _DashboardPageState extends State<DashboardPage> {
           if (unpaidDailyBills.isNotEmpty)
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                border: Border.all(color: Colors.blue),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade50, Colors.blue.shade100],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.blue.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -324,11 +422,22 @@ class _DashboardPageState extends State<DashboardPage> {
           if (allUnpaidSalaries.isNotEmpty)
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.purple.shade100,
-                border: Border.all(color: Colors.purple),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [Colors.purple.shade50, Colors.purple.shade100],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.purple.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.purple.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -398,32 +507,73 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
           // --- View Selector ---
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedView,
-                  items: ['Overall', 'Monthly', 'Weekly', 'Daily']
-                      .map((view) => DropdownMenuItem(
-                            value: view,
-                            child: Text(view),
-                          ))
-                      .toList(),
-                  onChanged: (value) => setState(() => _selectedView = value!),
-                  decoration: const InputDecoration(
-                    labelText: 'View',
-                    border: OutlineInputBorder(),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Time Period',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF374151),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              if (_selectedView != 'Overall')
-                TextButton.icon(
-                  onPressed: _pickDate,
-                  icon: const Icon(Icons.calendar_today),
-                  label: const Text('Change'),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedView,
+                          items: ['Overall', 'Monthly', 'Weekly', 'Daily']
+                              .map((view) => DropdownMenuItem(
+                                    value: view,
+                                    child: Text(view),
+                                  ))
+                              .toList(),
+                          onChanged: (value) => setState(() => _selectedView = value!),
+                          decoration: const InputDecoration(
+                            labelText: 'View Period',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    if (_selectedView != 'Overall')
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6366F1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          onPressed: _pickDate,
+                          icon: const Icon(Icons.calendar_today, color: Colors.white),
+                          tooltip: 'Change Date',
+                        ),
+                      ),
+                  ],
                 ),
-            ],
+              ],
+            ),
           ),
 
           if (_selectedView != 'Overall')
@@ -435,91 +585,248 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           
-          // Section 1: Total Sales
-          Text('Sales Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Card(
-            color: Colors.blue.shade50,
-            child: ListTile(
-              title: const Text('Total Sales'),
-              trailing: Text('₹${totalSales.toStringAsFixed(2)}'),
-            ),
-          ),
+          // Financial Overview Grid
+          _buildFinancialGrid(totalSales, paidExpenses, pendingExpenses, profitOrLoss),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
+          // Salary Overview
+          _buildSalaryOverview(staffList),
           
-          // Section 2: Expenses
-          Text('Expenses Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Card(
-            color: Colors.green.shade50,
-            child: ListTile(
-              title: const Text('Paid Expenses'),
-              trailing: Text('₹${paidExpenses.toStringAsFixed(2)}'),
-            ),
-          ),
-          Card(
-            color: Colors.red.shade50,
-            child: ListTile(
-              title: const Text('Pending Expenses'),
-              trailing: Text('₹${pendingExpenses.toStringAsFixed(2)}'),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Section 3: Salaries
-          Text('Salaries Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Card(
-            color: Colors.orange.shade50,
-            child: ListTile(
-              title: const Text('Advance Paid'),
-              trailing: Text('₹${staffList.fold(0.0, (sum, s) => sum + s.advancePaid).toStringAsFixed(2)}'),
-            ),
-          ),
-          Card(
-            color: Colors.red.shade50,
-            child: ListTile(
-              title: const Text('Unpaid Salary'),
-              trailing: Text('₹${staffList.where((s) => !s.isPaid).fold(0.0, (sum, s) => sum + s.payable(s.date.month, s.date.year).toDouble()).toStringAsFixed(2)}'),
-            ),
-          ),
-          Card(
-            color: Colors.green.shade50,
-            child: ListTile(
-              title: const Text('Total Salary Paid'),
-              trailing: Text('₹${staffList.where((s) => s.isPaid).fold(0.0, (sum, s) => sum + s.payable(s.date.month, s.date.year).toDouble() + s.advancePaid).toStringAsFixed(2)}'),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Section 4: Profit/Loss
-          Text('Financial Summary', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Card(
-            color: profitOrLoss >= 0 ? Colors.green[100] : Colors.red[100],
-            child: ListTile(
-              title: const Text('Profit / Loss'),
-              trailing: Text('₹${profitOrLoss.toStringAsFixed(2)}'),
-            ),
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           _buildExpenseChart(bills),
           const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: _exportPdf,
-            icon: const Icon(Icons.picture_as_pdf),
-            label: const Text('Export PDF'),
-          ),
+          
+          // Export Button
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF6366F1).withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
+            child: ElevatedButton.icon(
+              onPressed: _exportPdf,
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              label: const Text('Export PDF', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFinancialGrid(double totalSales, double paidExpenses, double pendingExpenses, double profitOrLoss) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Financial Overview',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF374151),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildFinancialCard(
+                'Total Sales',
+                '₹${totalSales.toStringAsFixed(2)}',
+                Icons.trending_up,
+                const Color(0xFF10B981),
+                const Color(0xFFD1FAE5),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildFinancialCard(
+                'Profit/Loss',
+                '₹${profitOrLoss.toStringAsFixed(2)}',
+                profitOrLoss >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
+                profitOrLoss >= 0 ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                profitOrLoss >= 0 ? const Color(0xFFD1FAE5) : const Color(0xFFFEE2E2),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildFinancialCard(
+                'Paid Expenses',
+                '₹${paidExpenses.toStringAsFixed(2)}',
+                Icons.check_circle,
+                const Color(0xFF6366F1),
+                const Color(0xFFEDE9FE),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildFinancialCard(
+                'Pending Expenses',
+                '₹${pendingExpenses.toStringAsFixed(2)}',
+                Icons.pending,
+                const Color(0xFFF59E0B),
+                const Color(0xFFFEF3C7),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFinancialCard(String title, String amount, IconData icon, Color iconColor, Color backgroundColor) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const Spacer(),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF6B7280),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            amount,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSalaryOverview(List<dynamic> staffList) {
+    final advancePaid = staffList.fold(0.0, (sum, s) => sum + s.advancePaid);
+    final unpaidSalary = staffList.where((s) => !s.isPaid).fold(0.0, (sum, s) => sum + s.payable(s.date.month, s.date.year).toDouble());
+    final totalSalaryPaid = staffList.where((s) => s.isPaid).fold(0.0, (sum, s) => sum + s.payable(s.date.month, s.date.year).toDouble() + s.advancePaid);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Salary Overview',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF374151),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildSalaryItem('Advance Paid', advancePaid, Icons.payment, const Color(0xFF8B5CF6)),
+          const SizedBox(height: 12),
+          _buildSalaryItem('Unpaid Salary', unpaidSalary, Icons.schedule, const Color(0xFFEF4444)),
+          const SizedBox(height: 12),
+          _buildSalaryItem('Total Salary Paid', totalSalaryPaid, Icons.check_circle, const Color(0xFF10B981)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSalaryItem(String title, double amount, IconData icon, Color color) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF6B7280),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                '₹${amount.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -625,10 +932,36 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildExpenseChart(List<dynamic> bills) {
     if (bills.isEmpty) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('No expenses to display in chart'),
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(
+              Icons.bar_chart,
+              size: 48,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No expenses to display',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -639,51 +972,174 @@ class _DashboardPageState extends State<DashboardPage> {
     }
 
     if (categoryTotals.isEmpty) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('No expenses to display in chart'),
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(
+              Icons.bar_chart,
+              size: 48,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No expenses to display',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       );
     }
 
     final maxValue = categoryTotals.values.reduce((a, b) => a > b ? a : b);
+    final colors = [
+      const Color(0xFF6366F1),
+      const Color(0xFF8B5CF6),
+      const Color(0xFF10B981),
+      const Color(0xFFF59E0B),
+      const Color(0xFFEF4444),
+      const Color(0xFF06B6D4),
+    ];
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Expenses by Category (${_getDateRangeText()})', 
-                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            ...categoryTotals.entries.map((entry) {
-              final percentage = entry.value / maxValue;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6366F1).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.bar_chart,
+                  color: Color(0xFF6366F1),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(entry.key),
-                        Text('₹${entry.value.toStringAsFixed(2)}'),
-                      ],
+                    const Text(
+                      'Expenses by Category',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF374151),
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    LinearProgressIndicator(
-                      value: percentage,
-                      backgroundColor: Colors.grey.shade300,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
+                    Text(
+                      _getDateRangeText().isEmpty ? 'Overall' : _getDateRangeText(),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF6B7280),
+                      ),
                     ),
                   ],
                 ),
-              );
-            }).toList(),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ...categoryTotals.entries.toList().asMap().entries.map((mapEntry) {
+            final index = mapEntry.key;
+            final entry = mapEntry.value;
+            final percentage = entry.value / maxValue;
+            final color = colors[index % colors.length];
+            
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            entry.key,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF374151),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '₹${entry.value.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3),
+                      color: Colors.grey.shade200,
+                    ),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: percentage,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(3),
+                          color: color,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
