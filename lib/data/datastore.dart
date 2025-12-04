@@ -938,4 +938,81 @@ class DataStore {
 
     return file.path;
   }
+
+  // --- JSON Export/Import ---
+  Future<String> exportAllDataJson() async {
+    final data = {
+      'exportDate': DateTime.now().toIso8601String(),
+      'restaurantId': restaurantId,
+      'bills': bills.map((b) => b.toJson()).toList(),
+      'sales': sales.map((s) => s.toJson()).toList(),
+      'staff': staff.map((s) => s.toJson()).toList(),
+      'staffDetails': staffDetails.map((s) => s.toJson()).toList(),
+      'categories': categories,
+    };
+
+    final jsonString = jsonEncode(data);
+
+    Directory? downloadsDir;
+    if (Platform.isAndroid) {
+      downloadsDir = Directory('/storage/emulated/0/Download');
+    } else if (Platform.isIOS) {
+      downloadsDir = await getApplicationDocumentsDirectory();
+    } else {
+      downloadsDir = await getDownloadsDirectory();
+    }
+
+    if (downloadsDir == null) {
+      throw Exception('Cannot determine downloads directory');
+    }
+
+    final file = File(
+      '${downloadsDir.path}/restaurant_data_${DateTime.now().millisecondsSinceEpoch}.json',
+    );
+    await file.writeAsString(jsonString);
+
+    return file.path;
+  }
+
+  Future<void> importDataFromJson(String jsonString) async {
+    final data = jsonDecode(jsonString) as Map<String, dynamic>;
+    
+    if (data['bills'] != null) {
+      final importedBills = (data['bills'] as List)
+          .map((e) => Bill.fromJson(e))
+          .toList();
+      bills.addAll(importedBills);
+      await saveBills();
+    }
+    
+    if (data['sales'] != null) {
+      final importedSales = (data['sales'] as List)
+          .map((e) => DailySales.fromJson(e))
+          .toList();
+      sales.addAll(importedSales);
+      await saveSales();
+    }
+    
+    if (data['staff'] != null) {
+      final importedStaff = (data['staff'] as List)
+          .map((e) => StaffMember.fromJson(e))
+          .toList();
+      staff.addAll(importedStaff);
+      await saveStaff();
+    }
+    
+    if (data['staffDetails'] != null) {
+      final importedStaffDetails = (data['staffDetails'] as List)
+          .map((e) => StaffDetails.fromJson(e))
+          .toList();
+      staffDetails.addAll(importedStaffDetails);
+      await saveStaffDetails();
+    }
+    
+    if (data['categories'] != null) {
+      final importedCategories = List<String>.from(data['categories']);
+      categories.addAll(importedCategories.where((c) => !categories.contains(c)));
+      await saveCategories();
+    }
+  }
 }

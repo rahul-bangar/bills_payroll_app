@@ -271,7 +271,7 @@ class _DailySalesPageState extends State<DailySalesPage> {
     }
 
     final sales = DailySales(
-      id: 's_${DateTime.now().millisecondsSinceEpoch}',
+      id: 's_${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecond}',
       date: selectedDate,
       totalSales: value,
       salesType: _salesType,

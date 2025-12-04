@@ -283,7 +283,7 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
                   return;
                 }
                 final staff = StaffDetails(
-                  id: 'staff_${DateTime.now().millisecondsSinceEpoch}',
+                  id: 'staff_${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecond}',
                   name: name,
                   monthlySalary: salary,
                   createdDate: DateTime.now(),
@@ -553,7 +553,7 @@ class _StaffSalaryPageState extends State<StaffSalaryPage> {
     }
 
     final salaryEntry = StaffMember(
-      id: 'salary_${DateTime.now().millisecondsSinceEpoch}',
+      id: 'salary_${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecond}',
       name: staffDetails.name,
       monthlySalary: staffDetails.monthlySalary,
       attendance: attendance,

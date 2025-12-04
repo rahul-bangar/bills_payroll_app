@@ -119,11 +119,14 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
+      drawer: _buildDrawer(),
       appBar: AppBar(
         title: Text(widget.restaurant.name),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, size: 20),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
         actions: [
           Container(
@@ -225,6 +228,117 @@ class _MainPageState extends State<MainPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          ),
+        ),
+        child: Column(
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: const Icon(
+                      Icons.restaurant_menu,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.restaurant.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'Restaurant Manager',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    _buildDrawerItem(0, Icons.dashboard, 'Dashboard'),
+                    _buildDrawerItem(1, Icons.point_of_sale, 'Sales'),
+                    _buildDrawerItem(2, Icons.receipt_long, 'Bills'),
+                    _buildDrawerItem(3, Icons.calendar_view_week, 'Weekly'),
+                    _buildDrawerItem(4, Icons.people_alt, 'Staff'),
+                    const Divider(height: 40),
+                    ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.red),
+                      title: const Text('Exit Restaurant'),
+                      onTap: () => Navigator.pushReplacementNamed(context, '/'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(int index, IconData icon, String title) {
+    final isSelected = _selectedIndex == index;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFF6366F1).withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isSelected ? const Color(0xFF6366F1) : Colors.grey.shade600,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? const Color(0xFF6366F1) : Colors.grey.shade700,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+        onTap: () {
+          setState(() => _selectedIndex = index);
+          Navigator.pop(context);
+        },
       ),
     );
   }

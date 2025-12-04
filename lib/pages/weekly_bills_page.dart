@@ -300,7 +300,7 @@ class _WeeklyBillsPageState extends State<WeeklyBillsPage> {
 
     final totalValue = _billItems.fold<double>(0, (sum, i) => sum + i.amount);
     final b = Bill(
-      id: 'b_${DateTime.now().millisecondsSinceEpoch}',
+      id: 'b_${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecond}',
       date: selectedDate,
       category: selectedCategory!,
       value: totalValue,

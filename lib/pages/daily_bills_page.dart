@@ -320,7 +320,7 @@ class _DailyBillsPageState extends State<DailyBillsPage> {
       return;
     }
     final b = Bill(
-      id: 'b_${DateTime.now().millisecondsSinceEpoch}',
+      id: 'b_${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecond}',
       date: selectedDate,
       category: selectedCategory!,
       value: val,
